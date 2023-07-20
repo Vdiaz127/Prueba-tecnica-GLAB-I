@@ -1,0 +1,44 @@
+{% extends "header.html" %}
+
+{% block title %}Iniciar Sesión{% endblock %}
+
+{% block content %}
+<div class="container align-self-center">
+    <h2 class="text-center m-5">Inicio de Sesion</h2>
+
+    {% if next_page != none %}
+    <div class="alert alert-danger" role="alert">
+        Primero loguese para acceder a la pagina
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <div class="alert alert-warning" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    {% for message in messages %}
+    {% if 'register_succesfull' in message.tags %}
+    <div class="alert alert-success" role="alert">
+        {{ message }}
+    </div>
+    {% endif %}
+    {% endfor %}
+
+    <form method="POST" action="">
+        {% csrf_token %}
+
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="floatingInput" name="correo" placeholder="Ingrese su correo">
+            <label for="floatingInput">Direccion Email</label>
+        </div>
+        <div class="form-floating">
+            <input type="password" class="form-control" id="floatingPassword" name="contraseña" placeholder="Ingrese su contraseña">
+            <label for="floatingPassword">Contraseña</label>
+        </div>
+
+        <button type="submit" class="d-grid mx-auto btn btn-primary m-3">Iniciar Sesion</button>
+    </form>
+</div>
+{% endblock %}

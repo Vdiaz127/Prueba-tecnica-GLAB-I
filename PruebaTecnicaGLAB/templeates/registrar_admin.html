@@ -1,0 +1,92 @@
+{% extends "header.html" %}
+
+{% block title %} Registro de Usuario Administrador{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if messages %}
+    <ul class="messages m-3">
+        {% for message in messages %}
+        {% if 'register_denied' in message.tags %}
+        <div class="alert alert-danger" role="alert">
+            {{ message }}
+        </div>
+        {% endif %}
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <form method="POST" action="">
+        {% csrf_token %}
+        <div class="container border border-primary p-5 m-3">
+            <h3 class="text-center text-primary border-bottom border-primary">Registro de Usuario Administrador </h3>
+
+
+            <form method="POST" action="">
+                {% csrf_token %}
+
+                <div class="row g-3 align-items-center m-1">
+                    <div class="col-auto">
+                        <label class="form-label" for="nombres">Nombres:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" class="form-control " name="nombres" required>
+                    </div>
+                </div>
+
+                <div class="row g-3 align-items-center m-1">
+                    <div class="col-auto">
+                        <label class="form-label" for="apellidos">Apellidos:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" class="form-control " name="apellidos" required>
+                    </div>
+                </div>
+
+                <div class="row g-3 align-items-center m-1">
+                    <div class="col-auto">
+                        <label for="apellidos" class="form-label">Tipo de documento:<label>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select" name="tipo_documento" aria-label="Default select example" required>
+                            <option value="" disabled selected>Selecciona una opcion</option>
+                            <option value="Pasaporte">Pasaporte</option>
+                            <option value="Cedula de identidad">Cedula de identidad</option>
+                            <option value="Licencia de conducir">Licencia de conducir</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row g-3 align-items-center m-1">
+                    <div class="col-auto">
+                        <label class="form-label" for="numero_documento">Numero de documento:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input class="form-control" type="text" name="numero_documento" pattern="[0-9]*"
+                        inputmode="numeric" required>
+                    </div>
+                </div>
+
+                <div class="row g-3 align-items-center m-1">
+                    <div class="col-auto">
+                        <label class="form-label" for="correo">Email: </label>
+                    </div>
+                    <div class="col-auto">
+                        <input class="form-control" type="email" name="email" required>
+                    </div>
+                </div>
+
+                <div class="row g-3 align-items-center m-1">
+                    <div class="col-auto">
+                        <label class="form-label" for="password">Contraseña: </label>
+                    </div>
+                    <div class="col-auto">
+                        <input class="form-control" type="password" name="password" required>
+                    </div>
+                </div>
+        </div>
+
+        <button type="submit" class="mx-auto d-grid btn btn-primary">Registrar Administrador</button>
+    </form>
+</div>
+
+{% endblock %}

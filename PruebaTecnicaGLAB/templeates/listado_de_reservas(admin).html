@@ -1,0 +1,142 @@
+{% extends "header.html" %}
+
+{% block title %} Listado de reservaciones {% endblock %}
+
+{% block content %}
+<div class="container ">
+    {% if listaReserva %}
+    <div id="reservationsContainer" class="row">
+        {% for f in listaReserva %}
+        <div class="col-md-4">
+            <div class="card m-1 {% if f.reservado == 'false' %} text-success {% else %} text-danger {% endif %}">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item text-center">
+                        <h5 class="card-title">Reservacion ID: {{f.id}}</h5>
+                        <h6 class="card-subtitle mb-2 text-body-secondary">Correo del usuario: {{ f.usuario.correo }}</h6>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="card-text"><b>Nombres:</b> {{ f.usuario.nombres }}</span><br>
+                        <span class="card-text"><b>Apellidos:</b> {{ f.usuario.apellidos }}</span><br>
+                        <span class="card-text"><b>Tipo de documento:</b> {{ f.usuario.tipo_documento }}</span><br>
+                        <span class="card-text"><b>Numero de documento:</b> {{ f.usuario.numero_documento }}</span><br>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="card-text"><b>Fecha de reservacion:</b> {{ f.fecha_reservacion|date:"d/m/Y" }}</span><br>
+                        <span class="card-text"><b>Tipo de reserva:</b> {{ f.tipo_reserva }}</span><br>
+                        <span class="card-text"><b>Cantidad de personas:</b> {{ f.cantidad_personas }}</span><br>
+                        <span class="card-text"><b>Descripcion o observaciones:</b> {{ f.descripcion }}</span><br>
+                    </li>
+                    <div class="p-3 m-auto">
+                        <button type="button" class="btn btn-info" data-bs-toggle="modal"
+                            data-bs-target="#ModaldeEdicion" data-bs-reserva-id="{{ f.id }}">Editar</button>
+                        {% if not f.reservado %}
+                        <form method="POST" action="{% url 'confirmar reserva' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="r_id" value="{{ f.id }}">
+                            <button type="submit" class="btn btn-warning"> Confirmar reserva </button>
+                        </form>
+                        {% else %}
+                        <button class="btn btn-success disabled">Reserva confirmada</button>
+                        {% endif %}
+                    </div>
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <h1>AUN NO HAY RESERVACIONES REGISTRADAS</h1>
+    {% endif %}
+</div>
+<!-- Modal -->
+<!-- Modal -->
+<div class="modal fade" id="ModaldeEdicion" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5 text-center" id="exampleModalLabel">Editar Reservacion{{f.id}}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{% url 'editar datos' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="reserva_id" id="reserva_id" value="">
+
+                    <label for="nombres" class="col-form-label">Nombres:</label>
+                    <input type="text" class="form-control" name="nombres">
+
+                    <label for="apellidos" class="col-form-label">Apellidos:</label>
+                    <input type="text" class="form-control" name="apellidos" >
+
+                    <div class="row g-3 align-items-center m-1">
+                        <div class="col-auto">
+                            <label for="apellidos" class="form-label">Tipo de documento:<label>
+                        </div>
+                        <div class="col-auto">
+                            <select class="form-select" name="tipo_documento" aria-label="Default select example" required>
+                                <option value="" disabled selected>Selecciona una opcion</option>
+                                <option value="Pasaporte">Pasaporte</option>
+                                <option value="Cedula de identidad">Cedula de identidad</option>
+                                <option value="Licencia de conducir">Licencia de conducir</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <label for="numero_documento" class="col-form-label">Número de documento:</label>
+                    <input type="text" class="form-control" name="numero_documento"
+                    pattern="[0-9]*"
+                    inputmode="numeric">
+
+                    <label fecha for="fecha" class="col-form-label">Fecha de la reservación:</label>
+                    <input type="date" class="form-control" name="fecha" required>
+
+                    <div class="row g-3 align-items-center m-1">
+                        <div class="col-auto">
+                            <label class="form-label" for="tipo_reserva">Tipo de reservacion: </label>
+                        </div>
+                        <div class="col-auto">
+                            <select class="form-select" name="tipo_reserva" aria-label="Default select example" required>
+                                <option value="" disabled selected>Selecciona una opcion</option>
+                                <option value="Cena">Cena</option>
+                                <option value="Almuerzo">Almuerzo</option>
+                                <option value="Onces">Onces</option>
+                                <option value="Cumpleaños">cumpleaños</option>
+                                <option value="Ocasión especial">Ocasión especial</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <label for="cantidad_personas" class="col-form-label">Cantidad de personas:</label>
+                    <input type="number" class="form-control" name="cantidad_personas"
+                        required>
+
+                    <label for="descripcion" class="col-form-label">Descripción y/o observaciones:</label>
+                    <textarea type="text" class="form-control" name="descripcion"
+                        required></textarea>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" onclick="salvarCambios()">Salvar cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var modal = document.getElementById('ModaldeEdicion');
+    modal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var reservaId = button.getAttribute('data-bs-reserva-id');
+        var reservaIdInput = document.getElementById('reserva_id');
+        reservaIdInput.value = reservaId;
+    });
+
+    function salvarCambios() {
+        var reservaId = document.getElementById('reserva_id').value;
+        // Aquí puedes utilizar la reservaId para realizar las acciones necesarias
+        // para guardar los cambios de la reserva con la ID correspondiente.
+    }
+</script>
+
+{% endblock %}
